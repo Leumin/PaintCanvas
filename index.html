@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Paint</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #mesa-dibujo {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="mesa-dibujo" width=800" height="400"></canvas>
+
+<script>
+
+    const ws = new WebSocket("ws://127.0.0.1:4000");
+    let canvas = document.getElementById("mesa-dibujo");
+    canvas.width = window.innerWidth;
+    let contexto = canvas.getContext("2d");
+    let presionado = false;
+    let coordenadasAgrupadas = [];
+
+    ws.onopen = function () {
+        console.log("Conexión abierta");
+    };
+
+    ws.onmessage = function (data) {
+        let info = JSON.parse(data.data);
+        contexto.beginPath();
+        for (let i = 0; i < info.length; i++) {
+            contexto.lineTo(info[i].x, info[i].y);
+            contexto.stroke();
+        }
+    };
+
+    canvas.addEventListener('mousedown', function (e) {
+        presionado = true;
+        contexto.beginPath();
+
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        presionado = false;
+        ws.send(JSON.stringify(coordenadasAgrupadas));
+        coordenadasAgrupadas = [];
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        if (presionado) {
+            contexto.lineTo(e.x, e.y);
+            contexto.stroke();
+            let datos = {
+                x: e.x,
+                y: e.y,
+            };
+            coordenadasAgrupadas.push(datos);
+        }
+    });
+
+</script>
+</body>
+</html>

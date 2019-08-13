@@ -1,0 +1,12 @@
+{
+    "name": "leumin/paint-canvas",
+    "authors": [
+        {
+            "name": "leumin",
+            "email": "leotroche20@gmail.com"
+        }
+    ],
+    "require": {
+        "cboden/ratchet": "^0.4.1"
+    }
+}
