@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Paint</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #mesa-dibujo {
+            border: 1px solid #000;
+        }
+        #colores {
+            display: flex;
+            width: 100%;
+            padding: 10px;
+        }
+        #colores .color {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        #colores .color:hover {
+            border: 2px solid #000;
+        }
+        #colores .color.negro {
+            background-color: #000;
+        }
+        #colores .color.azul {
+            background-color: #00F;
+        }
+        #colores .color.rojo {
+            background-color: #F00;
+        }
+        #colores .color.verde {
+            background-color: #0F0;
+        }
+        #pinceles{
+            display: flex;
+            width: 100%;
+            padding: 10px;
+        }
+        #pinceles .pincel{
+            width: 35px;
+            height: 35px;
+            margin-left: 200px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-weight: bolder;
+            font-family: "DejaVu Sans Condensed";
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="mesa-dibujo" width=800" height="400"></canvas>
+<div id="colores">
+    <div class="color negro" onclick="cambiarColor('#000')"></div>
+    <div class="color azul" onclick="cambiarColor('#00F')"></div>
+    <div class="color rojo" onclick="cambiarColor('#F00')"></div>
+    <div class="color verde" onclick="cambiarColor('#0F0')"></div>
+</div>
+<div id="pinceles">
+    <div class="pincel normal" onclick="cambiarEstiloPincel('')">Normal</div>
+    <div class="pincel degradado"  onclick="cambiarEstiloPincel('round')">Degradado</div>
+    <div class="pincel spray" onclick="cambiarEstiloPincel('butt')">Spray</div>
+</div>
+
+<script>
+
+    const ws = new WebSocket("ws://127.0.0.1:4000");
+    let canvas = document.getElementById("mesa-dibujo");
+    canvas.width = window.innerWidth;
+    let contexto = canvas.getContext("2d");
+    let presionado = false;
+    let coordenadasAgrupadas = [];
+    ws.onopen = function () {
+        console.log("Conexión abierta");
+    };
+    ws.onmessage = function (data) {
+        let info = JSON.parse(data.data);
+        contexto.beginPath();
+        for (let i = 0; i < info.length; i++) {
+            contexto.lineTo(info[i].x, info[i].y);
+            contexto.stroke();
+        }
+    };
+    canvas.addEventListener('mousedown', function (e) {
+        presionado = true;
+        //PINCEL CON SOMBRA
+        contexto.beginPath();
+        contexto.lineWidth = 20;//ESTA LINEA DEBE IR EN LA FUNCION DE CAMBIAR EL GROSOR
+        contexto.shadowBlur = 20;
+        contexto.moveTo(e.x, e.y);
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        presionado = false;
+        ws.send(JSON.stringify(coordenadasAgrupadas));
+        coordenadasAgrupadas = [];
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        var densidad = 80;
+        if (presionado) {
+            contexto.lineTo(e.x, e.y);
+            contexto.stroke();
+        for (var i = densidad; i--; ) {
+              var radio = 20;
+              var offsetX = getRandomInt(-radio, radio);
+              var offsetY = getRandomInt(-radio, radio);
+              contexto.fillRect(e.x + offsetX, e.y + offsetY, 1, 1);
+            }
+        }
+    });
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+        contexto.shadowColor = color;
+    }
+    function cambiarEstiloPincel(estilo) {
+        //contexto.strokeStyle = estilo;
+        contexto.lineCap = estilo;
+    }
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+</script>
+</body>
+</html>
