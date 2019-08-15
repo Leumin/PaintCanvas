@@ -17,15 +17,24 @@
 
 <canvas id="mesa-dibujo" width=800" height="400"></canvas>
 
-<script>
+<button id="descargar" onclick="GuardarCanvas()">Guardar Canvas como Imagen</button>
+<button id="limpiar" onclick="LimpiarTrazado()">Limpiar Mesa</button>
 
+<button id="Borrador" value="2" onclick="Inicio(this.value)">Usar Borrador</button>
+<button id="Lapiz" value="1" onclick="Inicio(this.value)">Usar Lapiz</button>
+<input type="range" min="1" max="100" id="Tamano" onchange="Tamano(this.value)">
+
+<script src="GuardarCanvas.js"></script>
+<script>
     const ws = new WebSocket("ws://127.0.0.1:4000");
+    var rango = 50;
     let canvas = document.getElementById("mesa-dibujo");
     canvas.width = window.innerWidth;
     let contexto = canvas.getContext("2d");
     let presionado = false;
+    let borrar = false;
     let coordenadasAgrupadas = [];
-
+    var condicion = 1;
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -39,18 +48,8 @@
         }
     };
 
-    canvas.addEventListener('mousedown', function (e) {
-        presionado = true;
-        contexto.beginPath();
-
-    });
-    canvas.addEventListener('mouseup', function (e) {
-        presionado = false;
-        ws.send(JSON.stringify(coordenadasAgrupadas));
-        coordenadasAgrupadas = [];
-    });
     canvas.addEventListener('mousemove', function (e) {
-        if (presionado) {
+        if (presionado && borrar == false){
             contexto.lineTo(e.x, e.y);
             contexto.stroke();
             let datos = {
@@ -58,9 +57,34 @@
                 y: e.y,
             };
             coordenadasAgrupadas.push(datos);
+        }else if (presionado && borrar){
+            contexto.clearRect(e.x, e.y, rango, rango);
         }
+
+    });
+    canvas.addEventListener('mousedown', function (e) {
+        if (condicion == 1){
+            presionado = true;
+            borrar = false;
+            contexto.beginPath();
+        }
+        if (condicion == 2){
+            borrar = true;
+            presionado = true;
+
+        }
+
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        presionado = false;
+        ws.send(JSON.stringify(coordenadasAgrupadas));
+        coordenadasAgrupadas = [];
     });
 
+
 </script>
+<script src="Borrador.js"></script>
 </body>
 </html>
+
+
