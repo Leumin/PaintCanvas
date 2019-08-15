@@ -18,51 +18,72 @@
 <canvas id="mesa-dibujo" width=800" height="400"></canvas>
 
 <button id="descargar" onclick="GuardarCanvas()">Guardar Canvas como Imagen</button>
+
 <button id="limpiar" onclick="LimpiarTrazado()">Limpiar Mesa</button>
 
 <button id="Borrador" value="2" onclick="Inicio(this.value)">Usar Borrador</button>
 <button id="Lapiz" value="1" onclick="Inicio(this.value)">Usar Lapiz</button>
-<input type="range" min="1" max="100" id="Tamano" onchange="Tamano(this.value)">
+<button id="Puntero" value="0" onclick="Inicio(this.value)">Usar Puntero</button>
+<input type="range" min="1" max="100" value="20" id="Tamano" onchange="Tamano(this.value)">
+
+<button id="Circulo" value="4" onclick="Inicio(this.value)">Insertar Circulo</button>
+<button id="Cuadrado" value="3" onclick="Inicio(this.value)">Insertar Cuadrado</button>
+<button id="Triangulo" value="5" onclick="Inicio(this.value)">Insertar Triangulo</button>
+
+<br>
+
+<button id="Square" onclick="Pluma('square')">Spray</button>
+<button id="Butt" onclick="Pluma('butt')">Butt</button>
+<button id="Round" onclick="Pluma('round')">Round</button>
+
+<button value="#00F" onclick="color(this.value)">Azul</button>
+<button value="#F00" onclick="color(this.value)">Red</button>
+<button value="#0F0" onclick="color(this.value)">Verde</button>
 
 <script src="GuardarCanvas.js"></script>
 <script>
-    const ws = new WebSocket("ws://127.0.0.1:4000");
-    var rango = 50;
-    let canvas = document.getElementById("mesa-dibujo");
+    var rango = 20;
+    var canvas = document.getElementById("mesa-dibujo");
     canvas.width = window.innerWidth;
-    let contexto = canvas.getContext("2d");
-    let presionado = false;
-    let borrar = false;
-    let coordenadasAgrupadas = [];
-    var condicion = 1;
-    ws.onopen = function () {
-        console.log("Conexión abierta");
-    };
+    var contexto = canvas.getContext("2d");
+    var presionado = false;
+    var borrar = false;
+    var condicion = 0;
+    var figuras = [];
+    let contador = 0;
+    let coorInicialx = 0;
+    let coorInicialy = 0;
 
-    ws.onmessage = function (data) {
-        let info = JSON.parse(data.data);
-        contexto.beginPath();
-        for (let i = 0; i < info.length; i++) {
-            contexto.lineTo(info[i].x, info[i].y);
-            contexto.stroke();
-        }
-    };
+
 
     canvas.addEventListener('mousemove', function (e) {
         if (presionado && borrar == false){
+            contexto.lineCap = "round";
             contexto.lineTo(e.x, e.y);
             contexto.stroke();
-            let datos = {
-                x: e.x,
-                y: e.y,
-            };
-            coordenadasAgrupadas.push(datos);
+
         }else if (presionado && borrar){
             contexto.clearRect(e.x, e.y, rango, rango);
         }
 
     });
     canvas.addEventListener('mousedown', function (e) {
+        if (condicion == 0){
+            contador ++;
+            if (contador == 1){
+                coorInicialx = e.x;
+                coorInicialy = e.y;
+            }
+            if (contador == 2){
+                contador = 0;
+                contexto.lineTo(coorInicialx,coorInicialy);
+                contexto.lineTo(e.x,e.y);
+                contexto.stroke()
+                contexto.beginPath()
+            }
+
+        }
+
         if (condicion == 1){
             presionado = true;
             borrar = false;
@@ -71,16 +92,34 @@
         if (condicion == 2){
             borrar = true;
             presionado = true;
-
+        }
+        if (condicion == 3){
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 100, 100);
+            contexto.stroke()
+        }
+        if (condicion == 4){
+            contexto.beginPath();
+            contexto.arc(e.x,e.y,50,0,Math.PI*2,true);
+            contexto.stroke();
+        }
+        if (condicion == 5){
+            contexto.beginPath();
+            contexto.moveTo(125,125);
+            contexto.lineTo(125, 45);
+            contexto.lineTo((e.x - 45),e.y);
+            contexto.closePath();
+            contexto.stroke();
         }
 
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
-        ws.send(JSON.stringify(coordenadasAgrupadas));
-        coordenadasAgrupadas = [];
     });
 
+    function color(color) {
+        contexto.strokeStyle = color
+    }
 
 </script>
 <script src="Borrador.js"></script>
