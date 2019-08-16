@@ -72,7 +72,9 @@
 </div>-->
 <button value="1" onclick="cambiarEstiloPincel(this.value)">Degradado</button>
 <button value="2" onclick="cambiarEstiloPincel(this.value)">Spray</button>
-
+<button value="3" onclick="cambiarEstiloPincel(this.value)">Sin Rellenar</button>
+<button value="4" onclick="cambiarEstiloPincel(this.value)">Rellenado</button>
+<button value="5" onclick="cambiarEstiloPincel(this.value)">Traso de Linea</button>
 
 <script>
     const ws = new WebSocket("ws://127.0.0.1:4000");
@@ -82,6 +84,7 @@
     let presionado = false;
     let coordenadasAgrupadas = [];
     let estilos = 0;
+    let contador = 0;
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -96,10 +99,41 @@
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         //PINCEL CON SOMBRA
+        if(estilos == 1){
         contexto.beginPath();
         contexto.lineWidth = 20;//ESTA LINEA DEBE IR EN LA FUNCION DE CAMBIAR EL GROSOR
+        contexto.lineJoin = contexto.lineCap = 'round';
         contexto.shadowBlur = 20;
         contexto.moveTo(e.x, e.y);
+        }
+        //Figuras
+        if (estilos == 3){
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 200, 200);
+            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
+            contexto.moveTo(e.x, e.y);
+        }
+        if (estilos == 4) {
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 200, 200);
+            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
+            contexto.moveTo(e.x, e.y);
+            contexto.fill();
+        }
+        if (estilos == 5){
+               contador ++;
+               if (contador == 1){
+                   coorInicialx = e.x;
+                   coorInicialy = e.y;
+               }
+               if (contador == 2){
+                   contador = 0;
+                   contexto.lineTo(coorInicialx,coorInicialy);
+                   contexto.lineTo(e.x,e.y);
+                   contexto.stroke();
+                   contexto.beginPath()
+               }
+        }
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
@@ -127,7 +161,10 @@
     });
     function cambiarColor(color) {
         contexto.strokeStyle = color;
+        if (estilos == 1){
         contexto.shadowColor = color;
+        }
+        contexto.fillStyle = color;
     }
     function cambiarEstiloPincel(value) {
         estilos = value;
