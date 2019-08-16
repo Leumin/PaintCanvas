@@ -78,6 +78,9 @@
     </select>
 
 </div>
+<button onclick="insertarimagen()"></button>
+<button value="4" onclick="circulo(this.value)">Circulo</button>
+<button onclick="insertarimagen()"></button>
 <script>
 
     const ws = new WebSocket("ws://127.0.0.1:4000");
@@ -120,6 +123,15 @@
 
         }
     });
+
+    function insertarimagen(e){
+        contexto.stroke();
+        contexto.drawImage(imagen, e.x, e.y, 900, 400);
+    }
+
+    function circulo(value) {
+        condicion = value.value;
+    }
 
     function cambiarColor(color) {
         contexto.strokeStyle = color;
