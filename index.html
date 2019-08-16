@@ -105,6 +105,10 @@
     let contexto = canvas.getContext("2d");
     let presionado = false;
     let coordenadasAgrupadas = [];
+    let imagen = new Image();
+    imagen.src = 'corage.png';
+
+
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -136,6 +140,7 @@
                 x: e.x,
                 y: e.y,
             };
+            contexto.drawImage(imagen, 100, 10, 500, 400);
             coordenadasAgrupadas.push(datos);
         }
     });
