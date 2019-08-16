@@ -34,19 +34,16 @@
     <div class="row">
         <div class="col-xl-2 justify-content-center">
             <p>
-                <a class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button value="1" onclick="Inicio('1')" class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pencil"></span>
-                </a>
-                <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
+                </button>
+                <button value="2" onclick="Inicio('2')" class="btn btn-warning" title="Borrador">
                     <span class="icon icon-eraser"></span>
-                </a>
+                </button>
                 <a class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pen">Oliver</span>
                 </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-bin"></span>
-                </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning" onclick="LimpiarTrazado()"  role="button">
                     <span class="icon icon-bin"></span>
                 </a>
                 <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -64,7 +61,7 @@
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-squared-plus">Leumin</span>
                 </a>
-                <a class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning w-50" title="Guardar Imagen" onclick="GuardarCanvas()">
                     <span class="icon icon-download"></span>
                     <span class="icon icon-image"></span>
                 </a>
@@ -75,11 +72,6 @@
                         <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
                     </form>
                     <input type="color" onchange="cambiarColor(value)">
-                </div>
-            </div>
-            <div class="collapse" id="borrador">
-                <div class="card card-body">
-
                 </div>
             </div>
         </div>
@@ -93,40 +85,36 @@
 
 
 
-<script src="jquery-3.3.1.slim.min.js"></script>
-<script src="popper.min.js"></script>
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
-    const ws = new WebSocket("ws://127.0.0.1:4000");
     let canvas = document.getElementById("mesa-dibujo");
     canvas.width = (window.innerWidth)/1.25;
     canvas.height = (window.innerHeight)/1.09;
-    let contexto = canvas.getContext("2d");
-    let presionado = false;
-    let coordenadasAgrupadas = [];
-    ws.onopen = function () {
-        console.log("Conexión abierta");
-    };
-    ws.onmessage = function (data) {
-        let info = JSON.parse(data.data);
-        contexto.beginPath();
-        for (let i = 0; i < info.length; i++) {
-            contexto.lineTo(info[i].x, info[i].y);
-            contexto.stroke();
-        }
-    };
+    var rango = 20;
+    var borrar = false;
+    var contexto = canvas.getContext("2d");
+    var presionado = false;
+
+
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
+
+        if (condicion == 2){
+            borrar = true;
+            presionado = true;
+        }
+
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
-        ws.send(JSON.stringify(coordenadasAgrupadas));
-        coordenadasAgrupadas = [];
     });
     canvas.addEventListener('mousemove', function (e) {
         if (presionado) {
+            contexto.lineCap = "round";
             contexto.lineTo((e.x) - 270, e.y);
             contexto.stroke();
             let datos = {
@@ -134,14 +122,17 @@
                 y: e.y,
             };
             coordenadasAgrupadas.push(datos);
+        }else if (presionado && borrar){
+            contexto.clearRect(e.x - 278, e.y, rango, rango);
         }
     });
-    function cambiarColor(color) {
-        contexto.strokeStyle = color;
-    }
     function dibujaTrazado(value){
         contexto.lineWidth = value;
+        rango = value;
     }
+
 </script>
+<script src="js/borrar.js"></script>
+<script src="js/guardar.js"></script>
 </body>
 </html>

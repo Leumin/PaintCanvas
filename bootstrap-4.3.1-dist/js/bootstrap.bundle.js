@@ -4,8 +4,8 @@
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jquery-3.3.1.slim.min')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jquery-3.3.1.slim.min'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('js/jquery-3.3.1.slim.min')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'js/jquery-3.3.1.slim.min'], factory) :
   (global = global || self, factory(global.bootstrap = {}, global.jQuery));
 }(this, function (exports, $) { 'use strict';
 
