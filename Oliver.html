@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Paint</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #mesa-dibujo {
+            border: 1px solid #000;
+        }
+        #colores {
+            display: flex;
+            width: 100%;
+            padding: 10px;
+        }
+        #colores .color {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        #colores .color:hover {
+            border: 2px solid #000;
+        }
+        #colores .color.negro {
+            background-color: #000;
+        }
+        #colores .color.azul {
+            background-color: #00F;
+        }
+        #colores .color.rojo {
+            background-color: #F00;
+        }
+        #colores .color.verde {
+            background-color: #0F0;
+        }
+        #pinceles{
+            display: flex;
+            width: 100%;
+            padding: 10px;
+        }
+        #pinceles .pincel{
+            width: 35px;
+            height: 35px;
+            margin-left: 200px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-weight: bolder;
+            font-family: "DejaVu Sans Condensed";
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="mesa-dibujo" width=800" height="400"></canvas>
+<div id="colores">
+    <div class="color negro" onclick="cambiarColor('#000')"></div>
+    <div class="color azul" onclick="cambiarColor('#00F')"></div>
+    <div class="color rojo" onclick="cambiarColor('#F00')"></div>
+    <div class="color verde" onclick="cambiarColor('#0F0')"></div>
+</div>
+<!--<div id="pinceles">
+    <div class="pincel normal" onclick="cambiarEstiloPincel('')">Normal</div>
+    <div class="pincel degradado"  onclick="cambiarEstiloPincel('round')">Degradado</div>
+    <div class="pincel spray" onclick="cambiarEstiloPincel('butt')">Spray</div>
+</div>-->
+<button value="1" onclick="cambiarEstiloPincel(this.value)">Degradado</button>
+<button value="2" onclick="cambiarEstiloPincel(this.value)">Spray</button>
+<button value="3" onclick="cambiarEstiloPincel(this.value)">Sin Rellenar</button>
+<button value="4" onclick="cambiarEstiloPincel(this.value)">Rellenado</button>
+<button value="5" onclick="cambiarEstiloPincel(this.value)">Traso de Linea</button>
+
+<script>
+    const ws = new WebSocket("ws://127.0.0.1:4000");
+    let canvas = document.getElementById("mesa-dibujo");
+    canvas.width = window.innerWidth;
+    let contexto = canvas.getContext("2d");
+    let presionado = false;
+    let coordenadasAgrupadas = [];
+    let estilos = 0;
+    let contador = 0;
+    ws.onopen = function () {
+        console.log("Conexión abierta");
+    };
+    ws.onmessage = function (data) {
+        let info = JSON.parse(data.data);
+        contexto.beginPath();
+        for (let i = 0; i < info.length; i++) {
+            contexto.lineTo(info[i].x, info[i].y);
+            contexto.stroke();
+        }
+    };
+    canvas.addEventListener('mousedown', function (e) {
+        presionado = true;
+        //PINCEL CON SOMBRA
+        if(estilos == 1){
+        contexto.beginPath();
+        contexto.lineWidth = 20;//ESTA LINEA DEBE IR EN LA FUNCION DE CAMBIAR EL GROSOR
+        contexto.lineJoin = contexto.lineCap = 'round';
+        contexto.shadowBlur = 20;
+        contexto.moveTo(e.x, e.y);
+        }
+        //Figuras
+        if (estilos == 3){
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 200, 200);
+            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
+            contexto.moveTo(e.x, e.y);
+        }
+        if (estilos == 4) {
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 200, 200);
+            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
+            contexto.moveTo(e.x, e.y);
+            contexto.fill();
+        }
+        if (estilos == 5){
+               contador ++;
+               if (contador == 1){
+                   coorInicialx = e.x;
+                   coorInicialy = e.y;
+               }
+               if (contador == 2){
+                   contador = 0;
+                   contexto.lineTo(coorInicialx,coorInicialy);
+                   contexto.lineTo(e.x,e.y);
+                   contexto.stroke();
+                   contexto.beginPath()
+               }
+        }
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        presionado = false;
+        ws.send(JSON.stringify(coordenadasAgrupadas));
+        coordenadasAgrupadas = [];
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        var densidad = 80;
+        if (estilos == 1){
+        if (presionado) {
+            contexto.lineTo(e.x, e.y);
+            contexto.stroke();
+            }
+        }
+        if (estilos == 2){
+            if (presionado){
+            for (var i = densidad; i--; ) {
+                  var radio = 20;
+                  var offsetX = getRandomInt(-radio, radio);
+                  var offsetY = getRandomInt(-radio, radio);
+                  contexto.fillRect(e.x + offsetX, e.y + offsetY, 1, 1);
+                }
+            }
+        }
+    });
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+        if (estilos == 1){
+        contexto.shadowColor = color;
+        }
+        contexto.fillStyle = color;
+    }
+    function cambiarEstiloPincel(value) {
+        estilos = value;
+    }
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+</script>
+</body>
+</html>

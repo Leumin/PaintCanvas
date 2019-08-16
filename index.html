@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Canvas Paint</title>
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="icomoon/style.css">
     <style>
         body {
             margin: 0;
@@ -11,21 +13,78 @@
         #mesa-dibujo {
             border: 1px solid #000;
         }
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
     </style>
+
 </head>
 <body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-2">
+            <p>
+                <a class="btn btn-primary" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-pencil"></span>
+                </a>
+                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-eraser"></span>
+                </a>
+                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-pen"></span>
+                </a>
+                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-bin"></span>
+                </a>
+            </p>
+            <div class="collapse" id="lapiz">
+                <div class="card card-body">
+                    <form name="grosor">
+                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+                    </form>
+                    <input type="color" onchange="cambiarColor(value)">
+                </div>
+            </div>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <form name="grosor">
+                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+                    </form>
+                    <input type="color" onchange="cambiarColor(value)">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-10">
+            <canvas id="mesa-dibujo" width="800" height="400"></canvas>
+        </div>
+    </div>
+</div>
 
-<canvas id="mesa-dibujo" width=800" height="400"></canvas>
+
+
+
+
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
-
     const ws = new WebSocket("ws://127.0.0.1:4000");
     let canvas = document.getElementById("mesa-dibujo");
-    canvas.width = window.innerWidth;
+    canvas.width = (window.innerWidth)/1.25;
+    canvas.height = (window.innerHeight)/1.09;
     let contexto = canvas.getContext("2d");
     let presionado = false;
     let coordenadasAgrupadas = [];
-
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -51,7 +110,7 @@
     });
     canvas.addEventListener('mousemove', function (e) {
         if (presionado) {
-            contexto.lineTo(e.x, e.y);
+            contexto.lineTo((e.x) - 270, e.y);
             contexto.stroke();
             let datos = {
                 x: e.x,
@@ -60,6 +119,15 @@
             coordenadasAgrupadas.push(datos);
         }
     });
+
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+    }
+
+    function dibujaTrazado(value){
+        contexto.lineWidth = value;
+    }
+
 
 </script>
 </body>
