@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Paint2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #mesa-dibujo {
+            border: 1px solid #000;
+        }
+
+        #colores {
+            display: flex;
+            width: 100%;
+            padding: 10px;
+        }
+
+        #colores .color {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        #colores .color:hover {
+            border: 2px solid #000;
+        }
+
+        #colores .color.negro {
+            background-color: #000;
+        }
+
+        #colores .color.azul {
+            background-color: #00F;
+        }
+
+        #colores .color.rojo {
+            background-color: #F00;
+        }
+
+        #colores .color.verde {
+            background-color: #0F0;
+        }
+    </style>
+</head>
+<body>
+<img id="imagen" src="Corage.jpg" alt="" width="225" height="350" hidden>
+<canvas id="mesa-dibujo" width=800" height="500"></canvas>
+<div id="colores">
+    <div class="color negro" onclick="cambiarColor('#000')"></div>
+    <div class="color azul" onclick="cambiarColor('#00F')"></div>
+    <div class="color rojo" onclick="cambiarColor('#F00')"></div>
+    <div class="color verde" onclick="cambiarColor('#0F0')"></div>
+</div>
+<div id="grosores">
+    <select id="numero-grasor" onchange="cambiarGrosor()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+    </select>
+
+</div>
+<script>
+
+    const ws = new WebSocket("ws://127.0.0.1:4000");
+    let canvas = document.getElementById("mesa-dibujo");
+    canvas.width = window.innerWidth;
+    let contexto = canvas.getContext("2d");
+    let presionado = false;
+    let coordenadasAgrupadas = [];
+    let condicion = 0;
+
+    // subir una imagen para que el usuario la pueda comentar
+    let imagen = new Image();
+    imagen.src = 'monstruo.png';
+
+    canvas.addEventListener('mousedown', function (e) {
+        presionado = true;
+        contexto.beginPath();
+
+        if (condicion === 3){
+            contexto.beginPath();
+            contexto.rect(e.x, e.y, 100, 100);
+            contexto.stroke()
+        }
+        if (condicion === 4){
+            contexto.beginPath();
+            contexto.arc(e.x,e.y,50,0,Math.PI*2,true);
+            contexto.stroke();
+        }
+
+    });
+    canvas.addEventListener('mouseup', function () {
+        presionado = false;
+        coordenadasAgrupadas = [];
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        if (presionado) {
+            contexto.lineTo(e.x, e.y);
+            contexto.stroke();
+            contexto.drawImage(imagen, 100, 100, 900, 400);
+
+        }
+    });
+
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+    }
+
+    function cambiarGrosor() {
+        let e = document.getElementById("numero-grasor");
+        let grosor = e.options[e.selectedIndex].value;
+        contexto.lineWidth = grosor;
+        console.log(grosor);
+    }
+
+</script>
+</body>
+</html>
