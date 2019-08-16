@@ -90,7 +90,7 @@
 
     // subir una imagen para que el usuario la pueda comentar
     let imagen = new Image();
-    imagen.src = 'monstruo.png';
+    imagen.src = 'corage.png';
 
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
@@ -116,7 +116,7 @@
         if (presionado) {
             contexto.lineTo(e.x, e.y);
             contexto.stroke();
-            contexto.drawImage(imagen, 100, 100, 900, 400);
+            contexto.drawImage(imagen, 100, 10, 500, 400);
 
         }
     });
