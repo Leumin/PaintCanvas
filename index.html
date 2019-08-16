@@ -52,15 +52,15 @@
                 <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-quill"></span>
                 </button>
-                <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-image">Leumin</span>
-                </a>
-                <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-circle">Leumin</span>
-                </a>
-                <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-squared-plus">Leumin</span>
-                </a>
+                <button onclick="coloreo()" class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-image"></span>
+                </button>
+                <button onclick="circulo()" class="btn btn-warning" title="Insertar Circulo" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-circle"></span>
+                </button>
+                <button onclick="cuadro()"  class="btn btn-warning" title="Insertar Cuadrado" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-squared-plus"></span>
+                </button>
                 <a onclick="GuardarCanvas()" class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-download"></span>
                     <span class="icon icon-image"></span>
@@ -99,7 +99,7 @@
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
-    const ws = new WebSocket("ws://127.0.0.1:4000");
+
     let canvas = document.getElementById("mesa-dibujo");
     canvas.width = (window.innerWidth)/1.25;
     canvas.height = (window.innerHeight)/1.09;
@@ -108,22 +108,38 @@
     let coordenadasAgrupadas = [];
     let contador = 0;
     let condicion;
+    /*Variables Leumin*/
+    let colorear = false;
+    let circular = false;
+    let cuadrado = false;
+    let imagen =  new Image();
+    imagen.src = 'img/corage.png';
+    /*------------------*/
 
-
-    ws.onopen = function () {
-        console.log("Conexión abierta");
-    };
-    ws.onmessage = function (data) {
-        let info = JSON.parse(data.data);
-        contexto.beginPath();
-        for (let i = 0; i < info.length; i++) {
-            contexto.lineTo(info[i].x, info[i].y);
-            contexto.stroke();
-        }
-    };
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
+        /*Mousedown Leumin*/
+        if(colorear){
+            contexto.beginPath();
+            contexto.drawImage(imagen, e.x-230, e.y, 500, 400);
+            contexto.stroke();
+            colorear = false;
+        }
+        if(cuadrado){
+            contexto.beginPath();
+            contexto.rect(e.x-230, e.y, 500, 400);
+            contexto.stroke();
+            cuadrado = false;
+        }
+        if(circular){
+            contexto.beginPath();
+            contexto.arc(e.x-270, e.y, 50, 0, 2 * Math.PI, true);
+            contexto.stroke();
+            circular = false;
+        }
+
+        /*-------------------*/
         //PINCEL SPRAY
 
         if (condicion == 1){
@@ -159,8 +175,6 @@
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
-        ws.send(JSON.stringify(coordenadasAgrupadas));
-        coordenadasAgrupadas = [];
     });
     canvas.addEventListener('mousemove', function (e) {
         let densidad = 200;
@@ -189,6 +203,7 @@
         }
     });
 
+
     function cambiarColor(color) {
         contexto.strokeStyle = color;
         contexto.shadowColor = color;
@@ -203,6 +218,23 @@
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
+
+    /*funciones Leumin*/
+
+    function coloreo() {
+        colorear = true;
+    }
+
+    function circulo() {
+        circular = true;
+    }
+
+    function cuadro() {
+        cuadrado = true;
+    }
+
+    /*----------------------*/
+
 </script>
 
 <script src="js/guardar.js"></script>

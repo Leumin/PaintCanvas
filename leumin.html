@@ -78,6 +78,7 @@
     </select>
 
 </div>
+
 <button onclick="insertarimagen()"></button>
 <button value="4" onclick="coloreo()">Imagen</button>
 <button value="4" onclick="circulo()">Circulo</button>
@@ -94,17 +95,12 @@
 
 
     let imagen = new Image();
-    imagen.src = 'corage.png';
+    imagen.src = 'img/corage.png';
 
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
-        if(colorear){
-            contexto.beginPath();
-            contexto.drawImage(imagen, e.x-230, e.y, 500, 400);
-            contexto.stroke();
-            colorear = false;
-        }
+
         if(cuadrado){
             contexto.beginPath();
             contexto.rect(e.x-230, e.y, 500, 400);
@@ -128,6 +124,10 @@
         if (presionado) {
             contexto.lineTo(e.x, e.y);
             contexto.stroke();
+        }
+        if(colorear){
+            contexto.drawImage(imagen, 10, 100, 500, 400);
+            colorear = false;
         }
     });
 
