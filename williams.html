@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Paint</title>
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="icomoon/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #mesa-dibujo {
+            border: 1px solid #000;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-2">
+            <p>
+                <a class="btn btn-outline-primary" data-toggle="collapse" href="#lapiz" onclick="Inicio('1')" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-pencil"></span>
+                </a>
+                <button class="btn btn-outline-primary" onclick="Inicio('2')"><span class="icon icon-eraser"></span></button>
+                <button class="btn btn-outline-primary"><span class="icon icon-pen"></span></button>
+                <button class="btn btn-outline-primary" onclick="LimpiarTrazado()"><span class="icon icon-bin"></span></button>
+                <button class="btn btn-outline-primary" onclick="GuardarCanvas()"><span class="icon icon-save"></span></button>
+            </p>
+            <form name="grosor">
+                <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+            </form>
+            <input type="color" onchange="cambiarColor(value)">
+            <!-- <div class="collapse" id="lapiz">
+                 <div class="card card-body">
+                     <form name="grosor">
+                         <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+                     </form>
+                     <input type="color" onchange="cambiarColor(value)">
+                 </div>
+             </div> -->
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <form name="grosor">
+                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+                    </form>
+                    <input type="color" onchange="cambiarColor(value)">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-10">
+            <canvas id="mesa-dibujo" width="800" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+
+<script>
+    let canvas = document.getElementById("mesa-dibujo");
+    canvas.width = (window.innerWidth)/1.25;
+    canvas.height = (window.innerHeight)/1.09;
+    var rango = 20;
+    var contexto = canvas.getContext("2d");
+    var presionado = false;
+    var borrar = false;
+    var condicion = 1;
+    let contador = 0;
+    let coorInicialx = 0;
+    let coorInicialy = 0;
+
+    canvas.addEventListener('mousedown', function (e) {
+        if (condicion == 1){//se selecciono el boton del lapiz
+            presionado = true;
+            borrar = false; // como estamos en el lapiz borrador se mantiene falso
+            contexto.beginPath();
+        }
+        if (condicion == 2){//aca es cuando se selecciona el borrador
+            borrar = true;//como borrador esta seleccionado borrar pasa a verdadero
+            presionado = true;
+        }
+
+    });
+    canvas.addEventListener('mouseup', function (e) {
+        presionado = false;
+
+    });
+    canvas.addEventListener('mousemove', function (e) {
+        if (presionado && borrar == false){ //si presinado es verdadero y borrar falso significa que solo va a dibujar de forma normal
+            contexto.lineCap = "round";
+            contexto.lineTo(e.x - 278, e.y);
+            contexto.stroke();
+        }else if (presionado && borrar){//si si presionado es verdadero y borrar tambien significa que se va a utlizar el borrador
+            contexto.clearRect(e.x - 278, e.y, rango, rango);//rango es el tamano del borrador
+        }
+    });
+    function dibujaTrazado(value){
+        contexto.lineWidth = value;
+        rango = value;
+    }
+</script>
+<script> /*borrador*/
+    function Inicio(valor) {
+        condicion = valor;
+    }
+
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+    }
+
+    function LimpiarTrazado() {
+        contexto.clearRect(0,0, canvas.width, canvas.height);
+    }
+</script>
+<script>/*guardar*/
+function GuardarCanvas(){
+    let filename = prompt("Guardar Como", "");
+    link = document.createElement('a');
+
+    if (filename == null){
+        return false;
+    }else if (filename == ""){
+        link.download ="Sin titulo";
+        link.href = canvas.toDataURL("image/png");
+    }else{
+        link.download = filename;
+        link.href = canvas.toDataURL("image/png");
+    }
+
+    link.click();
+}
+</script>
+</body>
+</html>
