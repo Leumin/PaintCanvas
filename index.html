@@ -100,9 +100,11 @@
 
 
     canvas.addEventListener('mousedown', function (e) {
-        presionado = true;
-        contexto.beginPath();
-
+        if(condicion == 1){
+            presionado = true;
+            borrar = false;
+            contexto.beginPath();
+        }
         if (condicion == 2){
             borrar = true;
             presionado = true;
@@ -113,7 +115,7 @@
         presionado = false;
     });
     canvas.addEventListener('mousemove', function (e) {
-        if (presionado) {
+        if (presionado && borrar == false) {
             contexto.lineCap = "round";
             contexto.lineTo((e.x) - 278, e.y);
             contexto.stroke();
@@ -122,13 +124,13 @@
             contexto.clearRect(e.x - 278, e.y, rango, rango);
         }
     });
-    function cambiarColor(color) {
-        contexto.strokeStyle = color;
-    }
-
     function dibujaTrazado(value){
         contexto.lineWidth = value;
         rango = value;
+    }
+
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
     }
 
 </script>

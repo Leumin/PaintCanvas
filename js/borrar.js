@@ -1,5 +1,6 @@
 function Inicio(value) {
     condicion = value;
+    alert(condicion);
 }
 
 function LimpiarTrazado() {

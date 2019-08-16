@@ -86,7 +86,6 @@
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
-
     });
     canvas.addEventListener('mousemove', function (e) {
         if (presionado && borrar == false){ //si presinado es verdadero y borrar falso significa que solo va a dibujar de forma normal
@@ -105,6 +104,7 @@
 <script> /*borrador*/
     function Inicio(valor) {
         condicion = valor;
+        alert(condicion);
     }
 
     function cambiarColor(color) {
