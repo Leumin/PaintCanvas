@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Canvas Paint</title>
     <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="icomoon/style.css">
@@ -33,17 +34,27 @@
     <div class="row">
         <div class="col-xl-2">
             <p>
-                <a class="btn btn-primary" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pencil"></span>
                 </a>
-                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
                 </a>
-                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pen"></span>
                 </a>
-                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
+                </a>
+                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-bin"></span>
+                </a>
+                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-quill"></span>
+                </a>
+                <a class="btn btn-warning w-100" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <span class="icon icon-download"></span>
+                    <span class="icon icon-image"></span>
                 </a>
             </p>
             <div class="collapse" id="lapiz">
@@ -54,12 +65,9 @@
                     <input type="color" onchange="cambiarColor(value)">
                 </div>
             </div>
-            <div class="collapse" id="collapseExample">
+            <div class="collapse" id="borrador">
                 <div class="card card-body">
-                    <form name="grosor">
-                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
-                    </form>
-                    <input type="color" onchange="cambiarColor(value)">
+
                 </div>
             </div>
         </div>
