@@ -34,9 +34,9 @@
     <div class="row">
         <div class="col-xl-2 justify-content-center">
             <p>
-                <a class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button value="1" class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-pencil"></span>
-                </a>
+                </button>
                 <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
                 </a>
@@ -49,10 +49,10 @@
                 <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
-                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="cambiarEstiloPincel(this.value)">
+                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-quill">Oliver degradado</span>
                 </button>
-                <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="cambiarEstiloPincel(this.value)">
+                <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-quill">Oliver spray</span>
                 </button>
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -89,10 +89,6 @@
     </div>
 </div>
 
-
-
-
-
 <script src="jquery-3.3.1.slim.min.js"></script>
 <script src="popper.min.js"></script>
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
@@ -112,7 +108,6 @@
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
-
     ws.onmessage = function (data) {
         let info = JSON.parse(data.data);
         contexto.beginPath();
@@ -121,28 +116,27 @@
             contexto.stroke();
         }
     };
-
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
         //PINCEL SPRAY
-        if(condicion == 3){
+        if(condicion == 6){
             contexto.beginPath();
             contexto.lineJoin = contexto.lineCap = 'round';
             contexto.shadowBlur = 20;
-            contexto.moveTo(e.x, e.y);
+            contexto.moveTo(e.x-230, e.y);
         }
         //LINEA SEGMENTO
          if (condicion == 3){
                contador ++;
                if (contador == 1){
-                   coorInicialx = e.x;
+                   coorInicialx = e.x-227;
                    coorInicialy = e.y;
                }
                if (contador == 2){
                    contador = 0;
                    contexto.lineTo(coorInicialx,coorInicialy);
-                   contexto.lineTo(e.x,e.y);
+                   contexto.lineTo(e.x-227, e.y);
                    contexto.stroke();
                    contexto.beginPath()
                }
@@ -154,21 +148,27 @@
         coordenadasAgrupadas = [];
     });
     canvas.addEventListener('mousemove', function (e) {
-        let densidad = 70;
-        if (estilos == 6){
+        let densidad = 200;
+        if (condicion == 1){
+            if (presionado){
+            contexto.lineTo((e.x) -230, e.y);
+            contexto.stroke();
+            }
+        }
+        if (condicion == 6){
         if (presionado) {
-            contexto.lineTo((e.x) - 270, e.y);
+            contexto.lineTo((e.x) -230, e.y);
             contexto.stroke();
         }
         }
         //PINCELES
-        if (estilos == 7){
+        if (condicion == 7){
             if (presionado){
             for (var i = densidad; i--; ) {
                   var radio = 20;
                   var offsetX = getRandomInt(-radio, radio);
                   var offsetY = getRandomInt(-radio, radio);
-                  contexto.fillRect(e.x + offsetX, e.y + offsetY, 1, 1);
+                  contexto.fillRect((e.x + offsetX)-230, e.y + offsetY, 1, 1);
                 }
             }
         }
@@ -176,18 +176,14 @@
 
     function cambiarColor(color) {
         contexto.strokeStyle = color;
-        if (estilos == 1){
-            contexto.shadowColor = color;
-        }
+        contexto.shadowColor = color;
+        contexto.fillStyle = color;
     }
     function figura(value) {
       condicion = value;
     }
     function dibujaTrazado(value){
         contexto.lineWidth = value;
-    }
-    function cambiarEstiloPincel(value) {
-        estilos = value;
     }
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
