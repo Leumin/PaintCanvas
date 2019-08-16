@@ -37,9 +37,9 @@
                 <a class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pencil"></span>
                 </a>
-                <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button value="2" onclick="borrador(this.value)" class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
-                </a>
+                </button>
                 <a class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-pen">Oliver</span>
                 </a>
@@ -105,6 +105,7 @@
     let contexto = canvas.getContext("2d");
     let presionado = false;
     let coordenadasAgrupadas = [];
+    let condicion = 0;
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -122,6 +123,7 @@
         presionado = true;
         contexto.beginPath();
 
+
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
@@ -130,6 +132,7 @@
     });
     canvas.addEventListener('mousemove', function (e) {
         if (presionado) {
+            contexto.lineCap = "round";
             contexto.lineTo((e.x) - 270, e.y);
             contexto.stroke();
             let datos = {
@@ -138,6 +141,7 @@
             };
             coordenadasAgrupadas.push(datos);
         }
+
     });
 
     function cambiarColor(color) {
@@ -148,8 +152,12 @@
         contexto.lineWidth = value;
     }
 
+    function borrador(valor) {
+        condicion = valor;
+    }
 
 
 </script>
+
 </body>
 </html>
