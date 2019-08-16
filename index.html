@@ -34,24 +34,27 @@
     <div class="row">
         <div class="col-xl-2 justify-content-center">
             <p>
-                <button value="1" onclick="Inicio('1')" class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button value="1" class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-pencil"></span>
                 </button>
-                <button value="2" onclick="Inicio('2')" class="btn btn-warning" title="Borrador">
+                <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
-                </button>
-                <a class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-pen">Oliver</span>
                 </a>
-                <a class="btn btn-warning" onclick="LimpiarTrazado()"  role="button">
+                <button value="3" class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                    <span class="icon icon-pen">Oliver linea</span>
+                </button>
+                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
                 <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-quill">Oliver</span>
+                    <span class="icon icon-bin"></span>
                 </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-quill">Oliver</span>
-                </a>
+                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                    <span class="icon icon-quill">Oliver degradado</span>
+                </button>
+                <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                    <span class="icon icon-quill">Oliver spray</span>
+                </button>
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-image">Leumin</span>
                 </a>
@@ -61,7 +64,7 @@
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-squared-plus">Leumin</span>
                 </a>
-                <a class="btn btn-warning w-50" title="Guardar Imagen" onclick="GuardarCanvas()">
+                <a class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-download"></span>
                     <span class="icon icon-image"></span>
                 </a>
@@ -74,6 +77,11 @@
                     <input type="color" onchange="cambiarColor(value)">
                 </div>
             </div>
+            <div class="collapse" id="borrador">
+                <div class="card card-body">
+
+                </div>
+            </div>
         </div>
         <div class="col-xl-10">
             <canvas id="mesa-dibujo" width="800" height="400"></canvas>
@@ -81,58 +89,105 @@
     </div>
 </div>
 
-
-
-
-
-<script src="js/jquery-3.3.1.slim.min.js"></script>
-<script src="js/popper.min.js"></script>
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
+    const ws = new WebSocket("ws://127.0.0.1:4000");
     let canvas = document.getElementById("mesa-dibujo");
     canvas.width = (window.innerWidth)/1.25;
     canvas.height = (window.innerHeight)/1.09;
-    var rango = 20;
-    var borrar = false;
-    var contexto = canvas.getContext("2d");
-    var presionado = false;
+    let contexto = canvas.getContext("2d");
+    let presionado = false;
+    let coordenadasAgrupadas = [];
+    let contador = 0;
+    let condicion;
 
 
+    ws.onopen = function () {
+        console.log("Conexión abierta");
+    };
+    ws.onmessage = function (data) {
+        let info = JSON.parse(data.data);
+        contexto.beginPath();
+        for (let i = 0; i < info.length; i++) {
+            contexto.lineTo(info[i].x, info[i].y);
+            contexto.stroke();
+        }
+    };
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
-
-        if (condicion == 2){
-            borrar = true;
-            presionado = true;
+        //PINCEL SPRAY
+        if(condicion == 6){
+            contexto.beginPath();
+            contexto.lineJoin = contexto.lineCap = 'round';
+            contexto.shadowBlur = 20;
+            contexto.moveTo(e.x-230, e.y);
         }
-
+        //LINEA SEGMENTO
+         if (condicion == 3){
+               contador ++;
+               if (contador == 1){
+                   coorInicialx = e.x-227;
+                   coorInicialy = e.y;
+               }
+               if (contador == 2){
+                   contador = 0;
+                   contexto.lineTo(coorInicialx,coorInicialy);
+                   contexto.lineTo(e.x-227, e.y);
+                   contexto.stroke();
+                   contexto.beginPath()
+               }
+        }
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
+        ws.send(JSON.stringify(coordenadasAgrupadas));
+        coordenadasAgrupadas = [];
     });
     canvas.addEventListener('mousemove', function (e) {
-        if (presionado) {
-            contexto.lineCap = "round";
-            contexto.lineTo((e.x) - 278, e.y);
+        let densidad = 200;
+        if (condicion == 1){
+            if (presionado){
+            contexto.lineTo((e.x) -230, e.y);
             contexto.stroke();
-
-        }else if (presionado && borrar){
-            contexto.clearRect(e.x - 278, e.y, rango, rango);
+            }
+        }
+        if (condicion == 6){
+        if (presionado) {
+            contexto.lineTo((e.x) -230, e.y);
+            contexto.stroke();
+        }
+        }
+        //PINCELES
+        if (condicion == 7){
+            if (presionado){
+            for (var i = densidad; i--; ) {
+                  var radio = 20;
+                  var offsetX = getRandomInt(-radio, radio);
+                  var offsetY = getRandomInt(-radio, radio);
+                  contexto.fillRect((e.x + offsetX)-230, e.y + offsetY, 1, 1);
+                }
+            }
         }
     });
+
     function cambiarColor(color) {
         contexto.strokeStyle = color;
+        contexto.shadowColor = color;
+        contexto.fillStyle = color;
     }
-
+    function figura(value) {
+      condicion = value;
+    }
     function dibujaTrazado(value){
         contexto.lineWidth = value;
-        rango = value;
     }
-
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 </script>
-<script src="js/borrar.js"></script>
-<script src="js/guardar.js"></script>
 </body>
 </html>
