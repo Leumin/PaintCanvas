@@ -45,22 +45,6 @@
                 <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
             </form>
             <input type="color" onchange="cambiarColor(value)">
-            <!-- <div class="collapse" id="lapiz">
-                 <div class="card card-body">
-                     <form name="grosor">
-                         <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
-                     </form>
-                     <input type="color" onchange="cambiarColor(value)">
-                 </div>
-             </div> -->
-            <div class="collapse" id="collapseExample">
-                <div class="card card-body">
-                    <form name="grosor">
-                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
-                    </form>
-                    <input type="color" onchange="cambiarColor(value)">
-                </div>
-            </div>
         </div>
         <div class="col-xl-10">
             <canvas id="mesa-dibujo" width="800" height="400"></canvas>
@@ -72,8 +56,8 @@
 
 
 
-<script src="jquery-3.3.1.slim.min.js"></script>
-<script src="popper.min.js"></script>
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
@@ -86,8 +70,7 @@
     var borrar = false;
     var condicion = 1;
     let contador = 0;
-    let coorInicialx = 0;
-    let coorInicialy = 0;
+
 
     canvas.addEventListener('mousedown', function (e) {
         if (condicion == 1){//se selecciono el boton del lapiz
