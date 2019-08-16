@@ -40,21 +40,21 @@
                 <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
                 </a>
-                <a class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-pen">Oliver</span>
-                </a>
+                <button value="3" class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                    <span class="icon icon-pen">Oliver linea</span>
+                </button>
                 <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
                 <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-quill">Oliver</span>
-                </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-quill">Oliver</span>
-                </a>
+                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="cambiarEstiloPincel(this.value)">
+                    <span class="icon icon-quill">Oliver degradado</span>
+                </button>
+                <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="cambiarEstiloPincel(this.value)">
+                    <span class="icon icon-quill">Oliver spray</span>
+                </button>
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-image">Leumin</span>
                 </a>
@@ -105,6 +105,10 @@
     let contexto = canvas.getContext("2d");
     let presionado = false;
     let coordenadasAgrupadas = [];
+    let contador = 0;
+    let condicion;
+
+
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -121,7 +125,28 @@
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
-
+        //PINCEL SPRAY
+        if(condicion == 3){
+            contexto.beginPath();
+            contexto.lineJoin = contexto.lineCap = 'round';
+            contexto.shadowBlur = 20;
+            contexto.moveTo(e.x, e.y);
+        }
+        //LINEA SEGMENTO
+         if (condicion == 3){
+               contador ++;
+               if (contador == 1){
+                   coorInicialx = e.x;
+                   coorInicialy = e.y;
+               }
+               if (contador == 2){
+                   contador = 0;
+                   contexto.lineTo(coorInicialx,coorInicialy);
+                   contexto.lineTo(e.x,e.y);
+                   contexto.stroke();
+                   contexto.beginPath()
+               }
+        }
     });
     canvas.addEventListener('mouseup', function (e) {
         presionado = false;
@@ -129,27 +154,44 @@
         coordenadasAgrupadas = [];
     });
     canvas.addEventListener('mousemove', function (e) {
+        let densidad = 70;
+        if (estilos == 6){
         if (presionado) {
             contexto.lineTo((e.x) - 270, e.y);
             contexto.stroke();
-            let datos = {
-                x: e.x,
-                y: e.y,
-            };
-            coordenadasAgrupadas.push(datos);
+        }
+        }
+        //PINCELES
+        if (estilos == 7){
+            if (presionado){
+            for (var i = densidad; i--; ) {
+                  var radio = 20;
+                  var offsetX = getRandomInt(-radio, radio);
+                  var offsetY = getRandomInt(-radio, radio);
+                  contexto.fillRect(e.x + offsetX, e.y + offsetY, 1, 1);
+                }
+            }
         }
     });
 
     function cambiarColor(color) {
         contexto.strokeStyle = color;
+        if (estilos == 1){
+            contexto.shadowColor = color;
+        }
     }
-
+    function figura(value) {
+      condicion = value;
+    }
     function dibujaTrazado(value){
         contexto.lineWidth = value;
     }
-
-
-
+    function cambiarEstiloPincel(value) {
+        estilos = value;
+    }
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 </script>
 </body>
 </html>
