@@ -34,34 +34,34 @@
     <div class="row">
         <div class="col-xl-2 justify-content-center">
             <p>
-                <button value="1" class="btn btn-warning" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                <button value="1" class="btn btn-outline-secondary w-100" title="Lapiz" data-toggle="collapse" href="#lapiz" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-pencil"></span>
                 </button>
-                <a class="btn btn-warning" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a onclick="cambiarColor('#fff')" class="btn btn-outline-secondary w-100" title="Borrador" data-toggle="collapse" href="#borrador" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-eraser"></span>
                 </a>
-                <button value="3" class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                <button value="3" class="btn btn-outline-secondary w-100" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-pen"></span>
                 </button>
-                <a onclick="LimpiarTrazado()" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a onclick="LimpiarTrazado()" class="btn btn-outline-secondary w-100" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
-                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#degradado" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                <button value="6" class="btn btn-outline-secondary w-100" data-toggle="collapse" href="#degradado" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-quill"></span>
                 </button>
-                <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                <button value="7" class="btn btn-outline-secondary w-100" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
                     <span class="icon icon-quill"></span>
                 </button>
-                <button onclick="coloreo()" class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button onclick="coloreo()" class="btn btn-outline-secondary w-100" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-image"></span>
                 </button>
-                <button onclick="circulo()" class="btn btn-warning" title="Insertar Circulo" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button onclick="circulo()" class="btn btn-outline-secondary w-100" title="Insertar Circulo" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-circle"></span>
                 </button>
-                <button onclick="cuadro()"  class="btn btn-warning" title="Insertar Cuadrado" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <button onclick="cuadro()" class="btn btn-outline-secondary w-100" title="Insertar Cuadrado" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-squared-plus"></span>
                 </button>
-                <a onclick="GuardarCanvas()" class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a onclick="GuardarCanvas()" class="btn btn-outline-secondary w-100" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-download"></span>
                     <span class="icon icon-image"></span>
                 </a>
@@ -121,14 +121,14 @@
         contexto.beginPath();
         /*Mousedown Leumin*/
         if(colorear){
-            contexto.beginPath();
+
             contexto.drawImage(imagen, e.x-230, e.y, 500, 400);
             contexto.stroke();
             colorear = false;
         }
         if(cuadrado){
             contexto.beginPath();
-            contexto.rect(e.x-230, e.y, 500, 400);
+            contexto.rect(e.x-230, e.y, 90, 90);
             contexto.stroke();
             cuadrado = false;
         }
@@ -222,7 +222,15 @@
     /*funciones Leumin*/
 
     function coloreo() {
-        colorear = true;
+        canvas.addEventListener('mousemove', function (e) {
+            if (presionado) {
+                contexto.beginPath();
+                contexto.lineTo(e.x, e.y);
+                contexto.stroke();
+                contexto.drawImage(imagen, 10, 100, 500, 400);
+            }
+
+        });
     }
 
     function circulo() {
