@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Canvas Paint</title>
+    <link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
     <style>
         body {
             margin: 0;
@@ -11,11 +12,55 @@
         #mesa-dibujo {
             border: 1px solid #000;
         }
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
     </style>
+
 </head>
 <body>
 
 <canvas id="mesa-dibujo" width=800" height="400"></canvas>
+<input type="color" onchange="cambiarColor(value)">
+<form name="grosor">
+    <input type="range" min="1" max="50"  name="valorgrosor" onchange="dibujaTrazado(value)">
+</form>
+
+<div class="container">
+    <div class="row">
+        <div class="col bg-warning">
+            1 of 2
+        </div>
+        <div class="col">
+            2 of 2
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            1 of 3
+        </div>
+        <div class="col">
+            2 of 3
+        </div>
+        <div class="col">
+            3 of 3
+        </div>
+    </div>
+</div>
+
+
+<script src="jquery-3.3.1.slim.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
 
@@ -25,7 +70,6 @@
     let contexto = canvas.getContext("2d");
     let presionado = false;
     let coordenadasAgrupadas = [];
-
     ws.onopen = function () {
         console.log("Conexión abierta");
     };
@@ -60,6 +104,15 @@
             coordenadasAgrupadas.push(datos);
         }
     });
+
+    function cambiarColor(color) {
+        contexto.strokeStyle = color;
+    }
+
+    function dibujaTrazado(value){
+        contexto.lineWidth = value;
+    }
+
 
 </script>
 </body>
