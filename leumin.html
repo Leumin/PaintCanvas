@@ -78,7 +78,7 @@
     </select>
 
 </div>
-<button onclick="insertarimagen()"></button>
+<button onclick="insertarimagen()">hola</button>
 <button value="4" onclick="coloreo()">Imagen</button>
 <button value="4" onclick="circulo()">Circulo</button>
 <button value="4" onclick="cuadro()">Cuadrado</button>
@@ -91,39 +91,32 @@
     let colorear = false;
     let circular = false;
     let cuadrado = false;
-
-
     let imagen = new Image();
-    imagen.src = 'corage.png';
+    imagen.src = 'img/corage.png';
 
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
-        if(colorear){
+
+        if (cuadrado) {
             contexto.beginPath();
-            contexto.drawImage(imagen, e.x-230, e.y, 500, 400);
-            contexto.stroke();
-            colorear = false;
-        }
-        if(cuadrado){
-            contexto.beginPath();
-            contexto.rect(e.x-230, e.y, 500, 400);
+            contexto.rect(e.x, e.y, 500, 400);
             contexto.stroke();
             cuadrado = false;
         }
-        if(circular){
+        if (circular) {
             contexto.beginPath();
             contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI, true);
             contexto.stroke();
             circular = false;
         }
-
-
     });
+
     canvas.addEventListener('mouseup', function () {
         presionado = false;
 
     });
+
     canvas.addEventListener('mousemove', function (e) {
         if (presionado) {
             contexto.lineTo(e.x, e.y);
@@ -131,9 +124,15 @@
         }
     });
 
-    function insertarimagen(e){
-        contexto.stroke();
-        contexto.drawImage(imagen, e.x, e.y, 900, 400);
+    function coloreo() {
+        canvas.addEventListener('mousemove', function (e) {
+            if (presionado) {
+                contexto.lineTo(e.x, e.y);
+                contexto.stroke();
+                contexto.drawImage(imagen, 10, 100, 500, 400);
+            }
+
+        });
     }
 
     function circulo(value) {
@@ -149,10 +148,6 @@
         let grosor = e.options[e.selectedIndex].value;
         contexto.lineWidth = grosor;
         console.log(grosor);
-    }
-
-    function coloreo() {
-        colorear = true;
     }
 
     function circulo() {
