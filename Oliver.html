@@ -72,9 +72,7 @@
 </div>-->
 <button value="1" onclick="cambiarEstiloPincel(this.value)">Degradado</button>
 <button value="2" onclick="cambiarEstiloPincel(this.value)">Spray</button>
-<button value="3" onclick="cambiarEstiloPincel(this.value)">Sin Rellenar</button>
-<button value="4" onclick="cambiarEstiloPincel(this.value)">Rellenado</button>
-<button value="5" onclick="cambiarEstiloPincel(this.value)">Traso de Linea</button>
+<button value="3" onclick="cambiarEstiloPincel(this.value)">Traso de Linea</button>
 
 <script>
     const ws = new WebSocket("ws://127.0.0.1:4000");
@@ -106,21 +104,8 @@
         contexto.shadowBlur = 20;
         contexto.moveTo(e.x, e.y);
         }
-        //Figuras
+
         if (estilos == 3){
-            contexto.beginPath();
-            contexto.rect(e.x, e.y, 200, 200);
-            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
-            contexto.moveTo(e.x, e.y);
-        }
-        if (estilos == 4) {
-            contexto.beginPath();
-            contexto.rect(e.x, e.y, 200, 200);
-            contexto.arc(e.x, e.y, 50, 0, 2 * Math.PI);
-            contexto.moveTo(e.x, e.y);
-            contexto.fill();
-        }
-        if (estilos == 5){
                contador ++;
                if (contador == 1){
                    coorInicialx = e.x;
