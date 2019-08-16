@@ -41,19 +41,16 @@
                     <span class="icon icon-eraser"></span>
                 </a>
                 <button value="3" class="btn btn-warning" title="" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
-                    <span class="icon icon-pen">Oliver linea</span>
+                    <span class="icon icon-pen"></span>
                 </button>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a onclick="LimpiarTrazado()" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-bin"></span>
                 </a>
-                <a class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <span class="icon icon-bin"></span>
-                </a>
-                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
-                    <span class="icon icon-quill">Oliver degradado</span>
+                <button value="6" class="btn btn-warning" data-toggle="collapse" href="#degradado" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
+                    <span class="icon icon-quill"></span>
                 </button>
                 <button value="7" class="btn btn-warning" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="figura(this.value)">
-                    <span class="icon icon-quill">Oliver spray</span>
+                    <span class="icon icon-quill"></span>
                 </button>
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-image">Leumin</span>
@@ -64,12 +61,20 @@
                 <a class="btn btn-warning" title="Insertar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-squared-plus">Leumin</span>
                 </a>
-                <a class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a onclick="GuardarCanvas()" class="btn btn-warning w-50" title="Guardar Imagen" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                     <span class="icon icon-download"></span>
                     <span class="icon icon-image"></span>
                 </a>
             </p>
             <div class="collapse" id="lapiz">
+                <div class="card card-body">
+                    <form name="grosor">
+                        <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
+                    </form>
+                    <input type="color" onchange="cambiarColor(value)">
+                </div>
+            </div>
+            <div class="collapse" id="degradado">
                 <div class="card card-body">
                     <form name="grosor">
                         <input type="range" min="1" max="100"  name="valorgrosor" onchange="dibujaTrazado(value)">
@@ -89,8 +94,8 @@
     </div>
 </div>
 
-<script src="jquery-3.3.1.slim.min.js"></script>
-<script src="popper.min.js"></script>
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
@@ -120,23 +125,33 @@
         presionado = true;
         contexto.beginPath();
         //PINCEL SPRAY
-        if(condicion == 6){
+
+        if (condicion == 1){
+            contexto.lineJoin = contexto.lineCap = 'round';
+            contexto.beginPath();
+            contexto.shadowBlur = 0;
+
+        }
+
+        else if(condicion == 6){
             contexto.beginPath();
             contexto.lineJoin = contexto.lineCap = 'round';
             contexto.shadowBlur = 20;
             contexto.moveTo(e.x-230, e.y);
         }
         //LINEA SEGMENTO
-         if (condicion == 3){
+         else if (condicion == 3){
                contador ++;
-               if (contador == 1){
-                   coorInicialx = e.x-227;
+            contexto.shadowBlur = 0;
+
+            if (contador == 1){
+                   coorInicialx = e.x-270;
                    coorInicialy = e.y;
                }
                if (contador == 2){
                    contador = 0;
                    contexto.lineTo(coorInicialx,coorInicialy);
-                   contexto.lineTo(e.x-227, e.y);
+                   contexto.lineTo(e.x-270, e.y);
                    contexto.stroke();
                    contexto.beginPath()
                }
@@ -151,13 +166,13 @@
         let densidad = 200;
         if (condicion == 1){
             if (presionado){
-            contexto.lineTo((e.x) -230, e.y);
+            contexto.lineTo((e.x) -270, e.y);
             contexto.stroke();
             }
         }
         if (condicion == 6){
         if (presionado) {
-            contexto.lineTo((e.x) -230, e.y);
+            contexto.lineTo((e.x) -270, e.y);
             contexto.stroke();
         }
         }
@@ -168,7 +183,7 @@
                   var radio = 20;
                   var offsetX = getRandomInt(-radio, radio);
                   var offsetY = getRandomInt(-radio, radio);
-                  contexto.fillRect((e.x + offsetX)-230, e.y + offsetY, 1, 1);
+                  contexto.fillRect((e.x + offsetX)-270, e.y + offsetY, 1, 1);
                 }
             }
         }
@@ -189,5 +204,8 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 </script>
+
+<script src="js/guardar.js"></script>
+<script src="js/borrar.js"></script>
 </body>
 </html>
