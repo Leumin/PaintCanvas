@@ -94,7 +94,6 @@
 <script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 
 <script>
-    const ws = new WebSocket("ws://127.0.0.1:4000");
     let canvas = document.getElementById("mesa-dibujo");
     canvas.width = (window.innerWidth)/1.25;
     canvas.height = (window.innerHeight)/1.09;
@@ -105,17 +104,7 @@
     let condicion;
 
 
-    ws.onopen = function () {
-        console.log("Conexión abierta");
-    };
-    ws.onmessage = function (data) {
-        let info = JSON.parse(data.data);
-        contexto.beginPath();
-        for (let i = 0; i < info.length; i++) {
-            contexto.lineTo(info[i].x, info[i].y);
-            contexto.stroke();
-        }
-    };
+
     canvas.addEventListener('mousedown', function (e) {
         presionado = true;
         contexto.beginPath();
@@ -161,7 +150,7 @@
             contexto.stroke();
         }
         }
-        //PINCELES
+        //SPRAY
         if (condicion == 7){
             if (presionado){
             for (var i = densidad; i--; ) {
